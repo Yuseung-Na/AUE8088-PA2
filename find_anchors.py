@@ -188,7 +188,7 @@ def train(hyp, opt, device, callbacks):
     boxes = np.column_stack((widths, heights))
 
     # K-means clustering
-    n_clusters = 3  # number of anchors
+    n_clusters = 9  # number of anchors
     kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(boxes)
     anchors = kmeans.cluster_centers_
 
