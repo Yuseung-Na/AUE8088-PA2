@@ -4,10 +4,10 @@ import json
 
 def create_kaist_json(val_txt_path, output_json_path):
     categories = [
-        {"id": 1, "name": "person"},
-        {"id": 2, "name": "cyclist"},
-        {"id": 3, "name": "people"},
-        {"id": 4, "name": "person?"}
+        {"id": 0, "name": "person"},
+        {"id": 1, "name": "cyclist"},
+        {"id": 2, "name": "people"},
+        {"id": 3, "name": "person?"}
     ]
     images = []
     annotations = []
@@ -18,7 +18,7 @@ def create_kaist_json(val_txt_path, output_json_path):
         for idx, line in enumerate(lines):
             img_path = line.strip().replace("{}", "")
             file_name = os.path.basename(img_path).replace('.jpg', '')
-            image_id = idx + 1
+            image_id = idx
             width, height = 640, 512
 
             images.append({"image_name": file_name, "id": image_id, "width": width, "height": height})
@@ -35,7 +35,7 @@ def create_kaist_json(val_txt_path, output_json_path):
                         "category_id": int(category_id),
                         "bbox": bbox,
                         "iscrowd": 0,
-                        "occlusion": occlusion,
+                        "occlusion": int(occlusion),
                         "width": bbox[2],
                         "height": bbox[3],
                         "id": id
@@ -50,7 +50,7 @@ def create_kaist_json(val_txt_path, output_json_path):
 
     with open(output_json_path, 'w') as json_file:
         json.dump(coco_format, json_file, indent=4)
-    print(f"COCO dataset JSON has been created: {output_json_path}")
+    print(f"KAIST_annotation.json has been created: {output_json_path}")
 
 def split_dataset(base_path, file_name, train_ratio=0.8):
     # Construct the full path to the file
@@ -68,8 +68,8 @@ def split_dataset(base_path, file_name, train_ratio=0.8):
     split_index = int(len(image_paths) * train_ratio)
 
     # Split the data
-    train_images = image_paths[:split_index]
-    val_images = image_paths[split_index:]
+    train_images = sorted(image_paths[:split_index])  # Sort the training images
+    val_images = sorted(image_paths[split_index:])    # Sort the validation images
 
     # Write the training images to train-split.txt in the specified directory
     with open(os.path.join(base_path, 'train-split.txt'), 'w') as file:
@@ -88,7 +88,7 @@ def split_dataset(base_path, file_name, train_ratio=0.8):
 
 if __name__ == "__main__":
     val_txt_path = split_dataset('./datasets/kaist-rgbt', 'train-all-04.txt')
-    create_kaist_json(val_txt_path, './datasets/kaist-rgbt/KAIST_annotation.json')
+    create_kaist_json(val_txt_path, './utils/eval/KAIST_annotation.json')
 
 
 
