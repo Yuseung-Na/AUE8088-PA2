@@ -165,11 +165,23 @@ class ComputeLoss:
 
                 # If prediction is matched (iou > 0.5) with bounding box marked as ignore,
                 # do not calculate objectness loss
-                ign_idx = (tcls[i] == -1) & (iou > self.hyp["iou_t"])
-                keep = ~ign_idx
-                b, a, gj, gi, iou = b[keep], a[keep], gj[keep], gi[keep], iou[keep]
-
-                tobj[b, a, gj, gi] = iou  # iou ratio
+                # ign_idx = (tcls[i] == -1) & (iou > self.hyp["iou_t"])
+                # keep = ~ign_idx
+                # b, a, gj, gi, iou = b[keep], a[keep], gj[keep], gi[keep], iou[keep]
+                
+                # tobj[b, a, gj, gi] = iou  # iou ratio
+                
+                ################################################################################
+                ################################### CHANGE LOSS ################################
+                ignore_mask = (tcls[i] == -1)
+                if ignore_mask.any():
+                    special_iou_t = 0.3
+                    special_keep = (iou[ignore_mask] > special_iou_t)
+                    tobj[b[ignore_mask][special_keep], a[ignore_mask][special_keep], gj[ignore_mask][special_keep], gi[ignore_mask][special_keep]] = iou[ignore_mask][special_keep]
+        
+                general_keep = (iou > self.hyp["iou_t"]) & ~ignore_mask
+                tobj[b[general_keep], a[general_keep], gj[general_keep], gi[general_keep]] = iou[general_keep]
+                ###############################################################################
 
                 # Classification
                 if self.nc > 1:  # cls loss (only if multiple classes)
