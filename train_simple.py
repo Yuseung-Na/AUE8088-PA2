@@ -420,6 +420,7 @@ def train(hyp, opt, device, callbacks):
                     callbacks=callbacks,
                     compute_loss=compute_loss,
                 )  # val best model with plots
+                
                 LOGGER.info(f"\nTesting {f}...")
                 results, _, _ = validate.run(
                     data_dict,
@@ -436,7 +437,7 @@ def train(hyp, opt, device, callbacks):
                     plots=False,
                     callbacks=callbacks,
                     compute_loss=compute_loss,
-                )  # val best model with plots
+                )  # test best model with plots
                 if is_coco:
                     callbacks.run("on_fit_epoch_end", list(mloss) + list(results) + lr, epoch, best_fitness, fi)
 
