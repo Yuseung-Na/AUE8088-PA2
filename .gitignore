@@ -1,5 +1,6 @@
 # KAIST annotations for test set
 utils/eval/KAIST_annotation.json
+/results/
 
 # Repo-specific GitIgnore ----------------------------------------------------------------------------------------------
 *.jpg

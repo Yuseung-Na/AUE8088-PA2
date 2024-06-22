@@ -16,7 +16,9 @@ with open('/home/yuseung/datasets/kaist-rgbt/train-all-04.txt', 'r') as file:
         with open(label_path, 'r') as lbl_file:
             for anno_id, line in enumerate(lbl_file):
                 category_id, x, y, w, h, occlusion = map(float, line.split())
-                labels.append([x, y, w, h])
+                
+                if (category_id == 0):
+                    labels.append([x, y, w, h])
                 
 labels = np.array(labels)
             
